@@ -3,7 +3,7 @@ module.exports = {
 		browser: true,
 		es6: true,
 	},
-	extends: ["airbnb"],
+	extends: ["next/babel", "next/core-web-vitals"],
 	globals: {
 		Atomics: "readonly",
 		SharedArrayBuffer: "readonly",
