@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import styled from "styled-components";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
 import MailIcon from "../../public/static/svg/auth/mail.svg";
@@ -15,8 +15,19 @@ import { userActions } from "../../store/user";
 import Input from "../common/input";
 import { commonActions } from "../../store/common";
 import useValidateMode from "../../hooks/useValidateMode";
+import PasswordWarning from "./PasswordWarning";
+import { authActions } from "../../store/auth";
 
-const SignUpModal: React.FC = () => {
+const PASSWORD_MIN_LENGTH = 8;
+const disabledMonths = ["월"];
+const disabledDays = ["일"];
+const disabledYears = ["년"];
+
+interface IProps {
+	closeModal: () => void;
+}
+
+const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 	const [email, setEmail] = useState("");
 	const [lastname, setLastname] = useState("");
 	const [firstname, setFirstname] = useState("");
@@ -25,9 +36,15 @@ const SignUpModal: React.FC = () => {
 	const [birthYear, setBirthYear] = useState<string | undefined>();
 	const [birthMonth, setBirthMonth] = useState<string | undefined>();
 	const [birthDay, setBirthDay] = useState<string | undefined>();
+	const [passwordFoucused, setPasswordFocused] = useState(false);
 
 	const dispatch = useDispatch();
 	const { setValidateMode } = useValidateMode();
+	useEffect(() => {
+		return () => {
+			setValidateMode(false);
+		};
+	}, []);
 
 	const onChangeBirthYear = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		setBirthYear(event.target.value);
@@ -61,34 +78,91 @@ const SignUpModal: React.FC = () => {
 		// dispatch(commonActions.setValidateMode(true));
 		setValidateMode(true);
 
-		if (!email || !lastname || !!firstname || !password) {
-			return undefined;
+		if (validateSignUpForm()) {
+			try {
+				const signUpBody = {
+					email,
+					lastname,
+					firstname,
+					password,
+					birthday: new Date(
+						`${birthYear}-${birthMonth!.replace("월", "")}-${birthDay}`
+					).toISOString(),
+				};
+				const { data } = await signupAPI(signUpBody);
+				dispatch(userActions.setLoggedUser(data));
+				closeModal();
+			} catch (e) {
+				console.log(e);
+			}
 		}
-		try {
-			const signUpBody = {
-				email,
-				lastname,
-				firstname,
-				password,
-				birthday: new Date(
-					`${birthYear}-${birthMonth!.replace("월", "")}-${birthDay}`
-				).toISOString(),
-			};
-			const { data } = await signupAPI(signUpBody);
-			dispatch(userActions.setLoggedUser(data));
-		} catch (e) {
-			console.log(e);
+	};
+
+	const onFocusPassword = () => {
+		setPasswordFocused(true);
+	};
+
+	//비밀번호가 이름 혹은 이메일을 포함하는가
+	const isPasswordHasNameOrEmail = useMemo(
+		() =>
+			!password ||
+			!lastname ||
+			password.includes(lastname) ||
+			password.includes(email.split("@")[0]),
+		[password, lastname, email]
+	);
+
+	//비밀번호가 8자 미만인지
+	const isPasswordOverMinLength = useMemo(
+		() => !password && password.length >= PASSWORD_MIN_LENGTH,
+		[password]
+	);
+
+	//특수기호, 혹은 숫자를 포함하는가
+	const isPasswordHasNumberOrSymbol = useMemo(
+		() =>
+			!(
+				/[{}[\]/?.,;:|)*~`!^\-_+<>@#$%&\\=('"]/g.test(password) ||
+				/[0-9]/g.test(password)
+			),
+		[password]
+	);
+
+	//최종 api 전송 전 Validation
+	const validateSignUpForm = () => {
+		//인풋 없음
+		if (!email || !lastname || !firstname || !password) {
+			return false;
 		}
+		//비밀번호 에러
+		if (
+			isPasswordHasNameOrEmail ||
+			!isPasswordOverMinLength ||
+			isPasswordHasNumberOrSymbol
+		) {
+			return false;
+		}
+
+		if (!birthDay || !birthMonth || !birthYear) {
+			return false;
+		}
+		return true;
+	};
+	const changeToLoginModal = () => {
+		dispatch(authActions.setAuthMode("login"));
 	};
 
 	return (
 		<Container onSubmit={onSubmitSignUp}>
-			<CloseXIcon className="mordal-close-x-icon"></CloseXIcon>
+			<CloseXIcon
+				className="modal-close-x-icon"
+				onClick={closeModal}
+			></CloseXIcon>
 			<div className="input-wrapper">
 				<Input
 					placeholder="이메일 주소"
 					type="email"
-					icon={<MailIcon />}
+					icon={<MailIcon className="input-wrapper-icon" />}
 					name="email"
 					value={email}
 					onChange={onChangeEmail}
@@ -100,7 +174,7 @@ const SignUpModal: React.FC = () => {
 			<div className="input-wrapper">
 				<Input
 					placeholder="이름(예:길동)"
-					icon={<PersonIcon />}
+					icon={<PersonIcon className="input-wrapper-icon" />}
 					value={lastname}
 					onChange={onChangeLastname}
 					useValidation
@@ -111,7 +185,7 @@ const SignUpModal: React.FC = () => {
 			<div className="input-wrapper">
 				<Input
 					placeholder="성(예:홍)"
-					icon={<PersonIcon />}
+					icon={<PersonIcon className="input-wrapper-icon" />}
 					value={firstname}
 					onChange={onChangeFirstname}
 					useValidation
@@ -125,18 +199,45 @@ const SignUpModal: React.FC = () => {
 					type={hidePassword ? "password" : "text"}
 					icon={
 						hidePassword ? (
-							<ClosedEyeIcon onClick={toggleHidePassword} />
+							<ClosedEyeIcon
+								className="input-wrapper-icon"
+								onClick={toggleHidePassword}
+							/>
 						) : (
-							<OpenedEyeIcon onClick={toggleHidePassword} />
+							<OpenedEyeIcon
+								className="input-wrapper-icon"
+								onClick={toggleHidePassword}
+							/>
 						)
 					}
 					value={password}
 					onChange={onChangePassword}
 					useValidation
-					isValid={!!password}
+					isValid={
+						!isPasswordHasNameOrEmail &&
+						isPasswordOverMinLength &&
+						!isPasswordHasNumberOrSymbol
+					}
 					errorMessage="비밀번호를 입력해주세요."
+					onFocus={onFocusPassword}
 				/>
 			</div>
+			{passwordFoucused && (
+				<>
+					<PasswordWarning
+						isValid={isPasswordHasNameOrEmail}
+						text="비밀번호에 이름이나 이메일 주소를 포함할 수 없습니다."
+					/>
+					<PasswordWarning
+						isValid={!isPasswordOverMinLength}
+						text="최소 8자이상 입력해주세요."
+					/>
+					<PasswordWarning
+						isValid={isPasswordHasNumberOrSymbol}
+						text="숫자나 특수문자를 포함해주세요. "
+					/>
+				</>
+			)}
 			<p className="sign-up-birthday-label">생일</p>
 			<p className="sign-up-modal-birthday-info">
 				만 18세 이상의 성인만 회원으로 가입할 수 있습니다. 생일은 다른
@@ -146,34 +247,44 @@ const SignUpModal: React.FC = () => {
 				<div className="sign-up-modal-birthday-month-selector">
 					<Selector
 						options={monthList}
-						disabledOptions={["월"]}
-						defaultValue="월"
 						value={birthMonth}
 						onChange={onChangeBirthMonth}
+						isValid={!!birthMonth}
+						disabledOptions={disabledMonths}
 					/>
 				</div>
 				<div className="sign-up-modal-birthday-day-selector">
 					<Selector
 						options={dayList}
-						disabledOptions={["일"]}
-						defaultValue="일"
 						value={birthDay}
 						onChange={onChangeBirthDay}
+						isValid={!!birthDay}
+						disabledOptions={disabledDays}
 					/>
 				</div>
 				<div className="sign-up-modal-birthday-year-selector">
 					<Selector
 						options={yearList}
-						disabledOptions={["년"]}
-						defaultValue="년"
 						value={birthYear}
 						onChange={onChangeBirthYear}
+						isValid={!!birthYear}
+						disabledOptions={disabledYears}
 					/>
 				</div>
 			</div>
 			<div className="sign-up-modal-submit-button-wrapper">
 				<Button type="submit">가입하기</Button>
 			</div>
+			<p>
+				이미 에어비엔비 계정이 있나요?
+				<span
+					className="sign-up-modal-set-login"
+					role="presentation"
+					onClick={changeToLoginModal}
+				>
+					로그인
+				</span>
+			</p>
 		</Container>
 	);
 };
@@ -186,7 +297,7 @@ const Container = styled.form`
 	background-color: white;
 	z-index: 11;
 
-	.mordal-close-x-icon {
+	.modal-close-x-icon {
 		cursor: pointer;
 		display: block;
 		margin: 0 0 40px auto;
@@ -195,41 +306,56 @@ const Container = styled.form`
 	.input-wrapper {
 		position: relative;
 		margin-bottom: 16px;
+
+		.input-wrapper-icon {
+			width : 30px;
+			height : 30px;
+			display : inline-flex;
+			align-items: center
+			justify-content: center;
+			margin-right:3px;
+		}
 	}
 	.sign-up-password-input-wrapper {
 		svg {
 			cursor: pointer;
 		}
 	}
-    .sign-up-birthday-label {
-        font-size: 16px
-        font-weight: 600;
-        margin-top: 16px
-        margin-bottom: 8px
-    }
-    .sign-up-modal-birthday-info {
-        margin-bottom: 16px;
-        color: ${palette.charcoal};
-    }
 
-    .sign-up-modal-birthday-selectors {
-        display: flex;
-        margin-bottom: 24px;
-        .sign-up-modal-birthday-month-selector {
-            margin-right: 16px;
-            flex-grow: 1;
-        }
-        .sign-up-modal-birthday-day-selector {
-            margin-right: 16px;
-            width: 25%;
-        }
-        .sign-up-modal-birthday-year-selector {
-            width: 33.3333%;
-        }
-    }
-    .sign-up-modal-button-wrapper {
-        margin-bottom: 16px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid ${palette.gray_eb};
-    }
+	.sign-up-birthday-label {
+		font-size: 16px;
+		font-weight: 600;
+		margin-top: 16px;
+		margin-bottom: 8px;
+	}
+
+	.sign-up-modal-birthday-info {
+		margin-bottom: 16px;
+		color: ${palette.charcoal};
+	}
+	.sign-up-modal-birthday-selectors {
+		display: flex;
+		margin-bottom: 24px;
+		.sign-up-modal-birthday-month-selector {
+			margin-right: 16px;
+			flex-grow: 1;
+		}
+		.sign-up-modal-birthday-day-selector {
+			margin-right: 16px;
+			width: 25%;
+		}
+		.sign-up-modal-birthday-year-selector {
+			width: 33.3333%;
+		}
+	}
+	.sign-up-modal-submit-button-wrapper {
+		margin-bottom: 16px;
+		padding-bottom: 16px;
+		border-bottom: 1px solid ${palette.gray_eb};
+	}
+	.sign-up-modal-set-login {
+		color: ${palette.dark_cyan};
+		margin-left: 8px;
+		cursor: pointer;
+	}
 `;
