@@ -38,19 +38,19 @@ const ModalPortal: React.FC<IProps> = ({ children, closePortal }) => {
 export default ModalPortal;
 
 const Container = styled.div`
-width: 100%;
-height: 100%;
-display: flex;
-justify-content: center;
-align-items: center;
-position: fixed;
-top: 0;
-left: 0;
-.modal-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color rgba(0, 0, 0, 0.75);
-    z-index: 10;
-}
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 11;
+	.modal-background {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.75);
+	}
 `;

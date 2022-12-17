@@ -1,5 +1,6 @@
 //  `next.config.js` 작성하기
-module.exports = {
+/** @type {import('next').NextConfig} */
+const NextConfig = {
 	webpack(config) {
 		config.module.rules.push({
 			test: /\.svg$/,
@@ -22,3 +23,5 @@ module.exports = {
 		],
 	},
 };
+
+module.exports = NextConfig;

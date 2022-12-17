@@ -1,4 +1,4 @@
-export const cookieStringObject = (cookieString?: string) => {
+export const cookieStringToObject = (cookieString?: string) => {
 	const cookies: { [key: string]: string } = {};
 	if (cookieString) {
 		//token vaule

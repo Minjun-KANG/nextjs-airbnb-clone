@@ -23,6 +23,7 @@ export default PasswordWarning;
 const Container = styled.p<{ isValid: boolean }>`
 	color: ${({ isValid }) =>
 		isValid ? palette.davidson_orange : palette.green};
+	line-height: 1.5;
 	display: flex;
 	align-items: center;
 	svg {

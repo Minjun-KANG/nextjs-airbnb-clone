@@ -114,7 +114,7 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 
 	//비밀번호가 8자 미만인지
 	const isPasswordOverMinLength = useMemo(
-		() => !password && password.length >= PASSWORD_MIN_LENGTH,
+		() => password.length >= PASSWORD_MIN_LENGTH,
 		[password]
 	);
 
@@ -234,7 +234,7 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 					/>
 					<PasswordWarning
 						isValid={isPasswordHasNumberOrSymbol}
-						text="숫자나 특수문자를 포함해주세요. "
+						text="숫자나 특수문자를 포함해주세요."
 					/>
 				</>
 			)}
@@ -306,15 +306,6 @@ const Container = styled.form`
 	.input-wrapper {
 		position: relative;
 		margin-bottom: 16px;
-
-		.input-wrapper-icon {
-			width : 30px;
-			height : 30px;
-			display : inline-flex;
-			align-items: center
-			justify-content: center;
-			margin-right:3px;
-		}
 	}
 	.sign-up-password-input-wrapper {
 		svg {

@@ -4,40 +4,22 @@ import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
 import AirbnbLogoTextIcon from "../public/static/svg/logo/logo_text.svg";
 import Link from "next/link";
 import palette from "../styles/palette";
-import useModal from "../hooks/useModal";
-import SignUpModal from "./auth/SignUpModal";
-import HamburgerIcon from "../public/static/svg/header/hamburger.svg";
-import { RootState, useSelector } from "../store";
-import { useDispatch } from "react-redux";
-import { authActions } from "../store/auth";
-import OutsideClickHandler from "react-outside-click-handler";
-import { logoutAPI } from "../lib/api/auth";
-import { userActions } from "../store/user";
+import { useSelector } from "../store";
 import HeaderAuths from "./HeaderAuths";
 import HeaderUserProfile from "./HeaderUserProfile";
 
 const Header: React.FC = () => {
-	const { openModal, ModalPortal, closeModal } = useModal();
-	const user = useSelector((state) => state.user);
-	const dispatch = useDispatch();
-
-	const [isUsermenuOpened, setIsUsermenuOpened] = useState(false);
-	const isLogged = useSelector((state: RootState) => state.user.isLogged);
-
+	const isLogged = useSelector((state) => state.user.isLogged);
 	return (
 		<Container>
-			<Link href={"/"}>
+			<Link href="/">
 				<div className="header-logo-wrapper">
-					<AirbnbLogoIcon className="header-logo"></AirbnbLogoIcon>
-					<AirbnbLogoTextIcon></AirbnbLogoTextIcon>
+					<AirbnbLogoIcon className="header-logo" />
+					<AirbnbLogoTextIcon />
 				</div>
 			</Link>
 			{!isLogged && <HeaderAuths />}
 			{isLogged && <HeaderUserProfile />}
-
-			<ModalPortal>
-				<SignUpModal closeModal={closeModal} />
-			</ModalPortal>
 		</Container>
 	);
 };
@@ -92,31 +74,34 @@ const Container = styled.div`
 				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
 			}
 		}
-		.header-user-profile {
-			display: flex;
-			align-items: center;
-			height: 42px;
-			padding: 0 6px 0 16px;
-			border: 0;
-			box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.18);
-			border-radius: 21px;
-			background-color: white;
-			cursor: pointer;
-			outline: none;
-			&:hover {
-				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
-			}
-			.header-user-profile-image {
-				margin-left: 8px;
-				width: 30px;
-				height: 30px;
-				border-radius: 50%;
-			}
+	}
+	.header-user-profile {
+		display: flex;
+		align-items: center;
+		height: 42px;
+		padding: 0 6px 0 16px;
+		border: 0;
+		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.18);
+		border-radius: 21px;
+		background-color: white;
+		cursor: pointer;
+		outline: none;
+		&:hover {
+			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
+		}
+		.header-user-profile-image {
+			margin-left: 8px;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
 		}
 	}
+
+	/** react-ouside-click-handler div */
 	.header-logo-wrapper + div {
 		position: relative;
 	}
+
 	.header-usermenu {
 		position: absolute;
 		right: 0;

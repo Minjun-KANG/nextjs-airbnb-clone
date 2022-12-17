@@ -32,10 +32,10 @@ const HeaderAuths: React.FC = () => {
 				>
 					로그인
 				</button>
-				<ModalPortal>
-					<AuthModal closeModal={closeModal} />
-				</ModalPortal>
 			</div>
+			<ModalPortal>
+				<AuthModal closeModal={closeModal} />
+			</ModalPortal>
 		</>
 	);
 };

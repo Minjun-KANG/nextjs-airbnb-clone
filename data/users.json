@@ -25,5 +25,23 @@
 		"password": "$2a$08$oJjavnM30jvgZOiwD.IsGuTK5MJtxIaHN6DHktvAwEVacnRkYiki6",
 		"birthday": "2019-01-31T15:00:00.000Z",
 		"profileImage": "/static/image/user/default_user_profile_image.jpg"
+	},
+	{
+		"id": 4,
+		"email": "ansalsdlf@naver.com",
+		"firstname": "강",
+		"lastname": "민준",
+		"password": "$2a$08$aLB/M2oBaX79HeFLPkumtebeW4u1IPXwAuoAsjoUCku.7ZU7ehroi",
+		"birthday": "1999-02-23T15:00:00.000Z",
+		"profileImage": "/static/image/user/default_user_profile_image.jpg"
+	},
+	{
+		"id": 5,
+		"email": "rkdalswns1@kw.ac.kr",
+		"firstname": "강",
+		"lastname": "민준",
+		"password": "$2a$08$ezfzMqO8hYZPXTmIAU6ZxOyVAQtJ6d7c1wVlag.Vxbjt8FoMq2NQe",
+		"birthday": "1934-06-06T15:00:00.000Z",
+		"profileImage": "/static/image/user/default_user_profile_image.jpg"
 	}
 ]

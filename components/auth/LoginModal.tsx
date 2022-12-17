@@ -32,7 +32,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 	const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setPassword(event.target.value);
 	};
-	const toggleHidePassword = () => {
+	const togglePasswordHiding = () => {
 		setIsPasswordHided(!isPasswordHided);
 	};
 	const changeToSignUpModal = () => {
@@ -41,9 +41,8 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 	const onSubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setValidateMode(true);
-
 		if (!email || !password) {
-			alert("이메일과 비밀번호를 입력해주세요.");
+			alert("이메일과 비밀번호를 입력해 주세요.");
 		} else {
 			const loginBody = { email, password };
 
@@ -65,10 +64,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 
 	return (
 		<Container onSubmit={onSubmitLogin}>
-			<CloseXIcon
-				className="modal-close-x-icon"
-				onClick={closeModal}
-			></CloseXIcon>
+			<CloseXIcon className="modal-close-x-icon" onClick={closeModal} />
 			<div className="login-input-wrapper">
 				<Input
 					placeholder="이메일 주소"
@@ -84,12 +80,13 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 			<div className="login-input-wrapper login-password-input-wrapper">
 				<Input
 					placeholder="비밀번호 설정하기"
+					name="password"
 					type={isPasswordHided ? "password" : "text"}
 					icon={
 						isPasswordHided ? (
-							<ClosedEyeIcon onClick={toggleHidePassword} />
+							<ClosedEyeIcon onClick={togglePasswordHiding} />
 						) : (
-							<OpenedEyeIcon onClick={toggleHidePassword} />
+							<OpenedEyeIcon onClick={togglePasswordHiding} />
 						)
 					}
 					value={password}
@@ -99,10 +96,12 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 				/>
 			</div>
 			<div className="login-modal-submit-button-wrapper">
-				<Button type="submit">로그인</Button>
+				<Button type="submit" color="bittersweet">
+					로그인
+				</Button>
 			</div>
 			<p>
-				이미 에어비엔비 계정이 있나요?
+				이미 에어비앤비 계정이 있나요?
 				<span
 					className="login-modal-set-signup"
 					role="presentation"

@@ -43,4 +43,5 @@ const initStore: MakeStore<any> = () => {
 	return store;
 };
 
+// export const wrapper = wrapper.useWrappedStore(initialR)
 export const wrapper = createWrapper(initStore);

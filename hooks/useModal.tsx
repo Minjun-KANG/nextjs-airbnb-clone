@@ -8,6 +8,7 @@ const useModal = () => {
 	const openModal = () => {
 		setModalOpened(true);
 	};
+
 	const closeModal = () => {
 		setModalOpened(false);
 	};
@@ -15,6 +16,7 @@ const useModal = () => {
 	interface IProps {
 		children: React.ReactNode;
 	}
+
 	const ModalPortal: React.FC<IProps> = ({ children }) => {
 		const ref = useRef<Element | null>();
 		const [mounted, setMounted] = useState(false);
@@ -34,7 +36,7 @@ const useModal = () => {
 						className="modal-background"
 						role="presentation"
 						onClick={closeModal}
-					></div>
+					/>
 					{children}
 				</Container>,
 				ref.current
@@ -53,19 +55,19 @@ const useModal = () => {
 export default useModal;
 
 const Container = styled.div`
-width: 100%;
-height: 100%;
-display: flex;
-justify-content: center;
-align-items: center;
-position: fixed;
-top: 0;
-left: 0;
-z-index: 11;
-.modal-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color rgba(0, 0, 0, 0.75);
-}
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 11;
+	.modal-background {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.75);
+	}
 `;
