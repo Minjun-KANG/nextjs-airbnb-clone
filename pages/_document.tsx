@@ -8,38 +8,15 @@ import Document, {
 import { ServerStyleSheet } from "styled-components";
 
 class MyDocument extends Document {
-	render() {
-		return (
-			<Html>
-				<Head>
-					<link
-						href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap"
-						rel="stylesheet"
-					></link>
-					<link
-						href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700&display=swap&subset=korean"
-						rel="stylesheet"
-					></link>
-				</Head>
-				<body>
-					<Main></Main>
-					<NextScript></NextScript>
-				</body>
-			</Html>
-		);
-	}
-
 	static async getInitialProps(ctx: DocumentContext) {
 		const sheet = new ServerStyleSheet();
 		const originalRenderPage = ctx.renderPage;
-
 		try {
 			ctx.renderPage = () =>
 				originalRenderPage({
 					enhanceApp: (App) => (props) =>
 						sheet.collectStyles(<App {...props} />),
 				});
-
 			const initialProps = await Document.getInitialProps(ctx);
 			return {
 				...initialProps,
@@ -53,6 +30,27 @@ class MyDocument extends Document {
 		} finally {
 			sheet.seal();
 		}
+	}
+
+	render() {
+		return (
+			<Html>
+				<Head>
+					<link
+						href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap"
+						rel="stylesheet"
+					/>
+					<link
+						href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700&display=swap&subset=korean"
+						rel="stylesheet"
+					/>
+				</Head>
+				<body>
+					<Main />
+					<NextScript />
+				</body>
+			</Html>
+		);
 	}
 }
 

@@ -1,22 +1,24 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import palette from "../../styles/palette";
 import { useSelector } from "../../store";
+import palette from "../../styles/palette";
 
 type InputContainerProps = {
 	iconExist: boolean;
 	isValid: boolean;
-	useValidation?: boolean;
+	useValidation: boolean;
 };
 
 interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	icon?: JSX.Element;
+	label?: string;
 	isValid?: boolean;
 	useValidation?: boolean;
 	errorMessage?: string;
 }
 
 const Input: React.FC<IProps> = ({
+	label,
 	icon,
 	isValid = false,
 	useValidation = true,
@@ -24,13 +26,20 @@ const Input: React.FC<IProps> = ({
 	...props
 }) => {
 	const validateMode = useSelector((state) => state.common.validateMode);
+
 	return (
 		<Container
 			iconExist={!!icon}
 			isValid={isValid}
 			useValidation={validateMode && useValidation}
 		>
-			<input {...props} />
+			{label && (
+				<label>
+					<span>{label}</span>
+					<input {...props} />
+				</label>
+			)}
+			{!label && <input {...props} />}
 			{icon}
 			{useValidation && validateMode && !isValid && errorMessage && (
 				<p className="input-error-message">{errorMessage}</p>
@@ -42,6 +51,12 @@ const Input: React.FC<IProps> = ({
 export default React.memo(Input);
 
 const Container = styled.div<InputContainerProps>`
+	label {
+		span {
+			display: block;
+			margin-bottom: 8px;
+		}
+	}
 	input {
 		position: relative;
 		width: 100%;
@@ -51,11 +66,11 @@ const Container = styled.div<InputContainerProps>`
 		border-radius: 4px;
 		font-size: 16px;
 		outline: none;
-		::placeholder {
+		& ::placeholder {
 			color: ${palette.gray_76};
 		}
 		& :focus {
-			border-color: ${palette.dark_cyan} !important;
+			border-color: ${palette.dark_cyan};
 		}
 	}
 	svg {
@@ -68,14 +83,6 @@ const Container = styled.div<InputContainerProps>`
 		font-weight: 600;
 		font-size: 14px;
 		color: ${palette.tawny};
-	}
-	.input-icon-wrapper {
-		position: absolute;
-		top: 0;
-		right: 11px;
-		height: 46px;
-		display: flex;
-		align-items: center;
 	}
 	${({ useValidation, isValid }) =>
 		useValidation &&

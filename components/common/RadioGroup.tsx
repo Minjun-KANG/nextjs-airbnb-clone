@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from "react";
 import styled, { css } from "styled-components";
 import palette from "../../styles/palette";
@@ -50,6 +51,8 @@ const RadioGroup: React.FC<IProps> = ({
 		</Container>
 	);
 };
+
+export default React.memo(RadioGroup);
 
 const Container = styled.div<{ isValid: boolean; validateMode: boolean }>`
 	.radio-label {
