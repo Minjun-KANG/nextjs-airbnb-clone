@@ -6,16 +6,9 @@ import { wrapper } from "../store";
 import { cookieStringToObject } from "../lib/utils";
 // import axios from "../lib/api";
 import axios from "axios";
-import { meAPI, healthCheckAPI } from "../lib/api/auth";
+import { meAPI } from "../lib/api/auth";
 import { userActions } from "../store/user";
 import { Provider } from "react-redux";
-import {
-	setCookie,
-	getCookies,
-	getCookie,
-	deleteCookie,
-	hasCookie,
-} from "cookies-next";
 
 const myApp = ({ Component, ...rest }: AppProps) => {
 	const { store, props } = wrapper.useWrappedStore(rest);
@@ -28,7 +21,9 @@ const myApp = ({ Component, ...rest }: AppProps) => {
 		</Provider>
 	);
 };
+// FC<AppProps> Type
 
+/*
 // const myApp: FC<AppProps> = ({ Component, ...rest }) => {
 // 	const { store, props } = wrapper.useWrappedStore(rest);
 // 	// const { store, props } = wrapper.useWrappedStore(pageProps);
@@ -45,6 +40,8 @@ const myApp = ({ Component, ...rest }: AppProps) => {
 //
 //
 // export default wrapper.withRedux(myApp);
+*/
+
 export default myApp;
 // second try - using page Component
 // myApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
@@ -79,29 +76,28 @@ export default myApp;
 
 myApp.getInitialProps = wrapper.getInitialAppProps(
 	() => async (context: AppContext) => {
-		console.log("Initital Props-1");
+		// console.log("Initital Props-1");
 		const appInitialProps = await App.getInitialProps(context);
-		console.log("Initital Props-2");
+		// console.log("Initital Props-2");
 		const cookieObject = cookieStringToObject(context.ctx.req?.headers.cookie);
-		console.log("Initital Props-3");
+		// console.log("Initital Props-3");
 		const { store } = context.ctx;
-		console.log("Initital Props-4" + store);
+		// console.log("Initital Props-4" + store);
 		const { isLogged } = store.getState().user;
-		console.log("Initital Props-5" + isLogged);
+		// console.log("Initital Props-5" + isLogged);
+
+		// export default axios;
 		try {
-			console.log("Initital Props-6");
+			// console.log("Initital Props-6");
 			if (!isLogged && cookieObject.access_token) {
-				console.log("Initital Props-7");
-				console.log(cookieObject.access_token);
+				// console.log("Initital Props-7");
+				// console.log(cookieObject.access_token);
 				axios.defaults.headers.cookie = cookieObject.access_token;
-				console.log("Initital Props-8");
-				// const { data } = await healthCheckAPI();
-				const { data } = await axios.get(
-					process.env.NEXT_PUBLIC_API_URL + "/api/auth/me"
-				);
-				console.log("Initital Props-9");
+				// console.log("Initital Props-8");
+				const { data } = await meAPI();
+				// console.log("Initital Props-9");
 				store.dispatch(userActions.setLoggedUser(data));
-				console.log("Initital Props-10");
+				// console.log("Initital Props-10");
 			}
 		} catch (e) {
 			console.log(e);
