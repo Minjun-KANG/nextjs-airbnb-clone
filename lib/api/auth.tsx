@@ -16,3 +16,5 @@ export const loginAPI = (body: { email: string; password: string }) =>
 export const meAPI = () => axios.get<UserType>("/api/auth/me");
 
 export const logoutAPI = () => axios.delete("/api/auth/logout");
+
+export const healthCheckAPI = () => axios.get("/api/health-check");

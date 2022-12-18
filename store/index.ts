@@ -34,11 +34,12 @@ const reducer = (state: any, action: any) => {
 //타입 지원되는 커스텀 useSelector
 export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
 
+export const store = configureStore({
+	reducer,
+	devTools: true,
+});
+
 const initStore: MakeStore<any> = () => {
-	const store = configureStore({
-		reducer,
-		devTools: true,
-	});
 	initialRootState = store.getState();
 	return store;
 };
