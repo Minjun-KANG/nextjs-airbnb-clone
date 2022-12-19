@@ -1,13 +1,8 @@
 import React from "react";
-import styled from "styled-components";
+import Home from "../components/home/Home";
 
 const index: React.FC = () => {
-	return <Container>hello</Container>;
+	return <Home />;
 };
 
 export default index;
-
-const Container = styled.div`
-	font-size: 21px;
-	color: grey;
-`;
