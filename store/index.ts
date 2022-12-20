@@ -9,8 +9,10 @@ import common from "./common";
 import auth from "./auth";
 import registerRoom from "./registerRoom";
 import searchRoom from "./searchRoom";
+import room from "./room";
 
 const rootReducer = combineReducers({
+	room: room.reducer,
 	searchRoom: searchRoom.reducer,
 	registerRoom: registerRoom.reducer,
 	common: common.reducer,
